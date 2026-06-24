@@ -5,12 +5,9 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create-drop  # Dev only — change to validate for prod
     show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
 
 jwt:
-  secret: 6D5A7134743777217A25432A462D4A614E645267556B58703273357638792F42
+  secret: ${JWT_SECRET:6D5A7134743777217A25432A462D4A614E645267556B58703273357638792F42}
   expiration: 86400000
