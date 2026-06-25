@@ -7,12 +7,14 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity @Table(name = "workout_sessions")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class WorkoutSession {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
