@@ -34,9 +34,6 @@ public class WorkoutService {
 
         Exercise first = adaptiveService.selectNextExercise(session, null);
 
-        sessionLogRepository.save(SessionLog.builder()
-            .session(session).exercise(first).timestamp(LocalDateTime.now()).build());
-
         return WorkoutStartResponse.builder()
             .sessionId(session.getId())
             .exercise(toResponse(first))
