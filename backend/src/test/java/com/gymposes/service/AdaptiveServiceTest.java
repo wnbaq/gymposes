@@ -53,7 +53,7 @@ class AdaptiveServiceTest {
 
     @Test
     void selectNextExercise_skipsLastExercise() {
-        // Exclude medium (id=2L), so between easy (3.2) and hard (6.8), easy is closer to 5.0
+        // Exclude medium (id=2L): easy effectiveScore=3.2 (dist 1.8) and hard effectiveScore=6.8 (dist 1.8) are equidistant; either is valid
         Exercise selected = adaptiveService.selectNextExercise(session, 2L);
         assertThat(selected.getId()).isIn(1L, 3L);
     }
@@ -67,7 +67,7 @@ class AdaptiveServiceTest {
     @Test
     void updateTargetScore_badDecreasesTarget() {
         double result = adaptiveService.updateTargetScore(5.0, WorkoutResult.BAD);
-        assertThat(result).isEqualTo(4.7);
+        assertThat(result).isCloseTo(4.7, org.assertj.core.data.Offset.offset(0.001));
     }
 
     @Test

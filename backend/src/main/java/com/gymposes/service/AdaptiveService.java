@@ -7,6 +7,7 @@ import com.gymposes.repository.ExerciseRepository;
 import com.gymposes.repository.UserScoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,10 @@ public class AdaptiveService {
 
         double targetScore = session.getTargetScore();
 
+        if (candidates.isEmpty()) {
+            throw new IllegalStateException("No exercises available for session");
+        }
+
         return candidates.stream()
             .filter(e -> !e.getId().equals(excludeExerciseId))
             .min(Comparator.comparingDouble(e -> {
@@ -39,18 +44,27 @@ public class AdaptiveService {
                 double effectiveScore = e.getDifficultyScore() * 0.6 + uScore * 0.4;
                 return Math.abs(effectiveScore - targetScore);
             }))
-            .orElse(candidates.get(0));
+            .orElseGet(() -> candidates.stream()
+                .min(Comparator.comparingDouble(e -> {
+                    double uScore = userScores.getOrDefault(e.getId(), 5.0);
+                    double effectiveScore = e.getDifficultyScore() * 0.6 + uScore * 0.4;
+                    return Math.abs(effectiveScore - targetScore);
+                }))
+                .orElseThrow(() -> new IllegalStateException("No exercises available for session")));
     }
 
+    @Transactional
     public void updateUserScore(User user, Exercise exercise, WorkoutResult result) {
+        if (result == WorkoutResult.SKIP) return;
+
         UserScore score = userScoreRepository.findByUserAndExercise(user, exercise)
             .orElse(UserScore.builder().user(user).exercise(exercise).score(5.0).build());
 
-        switch (result) {
-            case GOOD -> score.setScore(score.getScore() + 1.0);
-            case BAD  -> score.setScore(score.getScore() - 0.5);
-            case SKIP -> { /* no change */ }
-        }
+        score.setScore(switch (result) {
+            case GOOD -> score.getScore() + 1.0;
+            case BAD  -> score.getScore() - 0.5;
+            case SKIP -> score.getScore(); // unreachable, guarded above
+        });
         userScoreRepository.save(score);
     }
 
