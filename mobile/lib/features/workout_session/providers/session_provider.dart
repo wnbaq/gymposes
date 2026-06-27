@@ -10,6 +10,7 @@ class SessionState {
   final int remainingSeconds;
   final bool completed;
   final WorkoutSummary? summary;
+  final bool isCountingDown;
 
   const SessionState({
     this.sessionId,
@@ -17,6 +18,7 @@ class SessionState {
     this.remainingSeconds = 0,
     this.completed = false,
     this.summary,
+    this.isCountingDown = false,
   });
 
   SessionState copyWith({
@@ -25,6 +27,7 @@ class SessionState {
     int? remainingSeconds,
     bool? completed,
     WorkoutSummary? summary,
+    bool? isCountingDown,
   }) =>
       SessionState(
         sessionId: sessionId ?? this.sessionId,
@@ -32,6 +35,7 @@ class SessionState {
         remainingSeconds: remainingSeconds ?? this.remainingSeconds,
         completed: completed ?? this.completed,
         summary: summary ?? this.summary,
+        isCountingDown: isCountingDown ?? this.isCountingDown,
       );
 }
 
@@ -63,10 +67,17 @@ class SessionNotifier extends StateNotifier<AsyncValue<SessionState>> {
         sessionId: response.sessionId,
         currentExercise: response.exercise,
         remainingSeconds: response.remainingSeconds,
+        isCountingDown: true,
       ));
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
+  }
+
+  void finishCountdown() {
+    state.whenData((s) {
+      state = AsyncValue.data(s.copyWith(isCountingDown: false));
+    });
   }
 
   Future<void> submitResult(String result) async {
@@ -95,6 +106,12 @@ class SessionNotifier extends StateNotifier<AsyncValue<SessionState>> {
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
+  }
+
+  Future<void> endSession() async {
+    final current = state.valueOrNull;
+    if (current == null || current.sessionId == null) return;
+    await _completeSession(current.sessionId!);
   }
 
   Future<void> _completeSession(int sessionId) async {
