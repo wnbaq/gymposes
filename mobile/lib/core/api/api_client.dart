@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 import '../storage/secure_storage.dart';
 
 class ApiClient {
-  // Android emülatör için 10.0.2.2, gerçek cihaz/iOS için localhost veya IP
-  static const baseUrl = 'http://10.0.2.2:8080';
+  static const baseUrl = 'http://localhost:8080';
 
   final Dio _dio;
 
