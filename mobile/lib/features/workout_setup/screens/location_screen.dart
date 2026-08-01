@@ -11,7 +11,16 @@ class LocationScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Nerede antrenman yapacaksın?')),
+      appBar: AppBar(
+        title: const Text('Nerede antrenman yapacaksın?'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list_alt),
+            tooltip: 'Programlarım',
+            onPressed: () => context.push('/programs'),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

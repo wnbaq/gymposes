@@ -9,6 +9,8 @@ import '../features/workout_session/screens/exercise_screen.dart';
 import '../features/summary/screens/summary_screen.dart';
 import '../features/history/screens/history_screen.dart';
 import '../features/history/screens/profile_screen.dart';
+import '../features/programs/screens/program_list_screen.dart';
+import '../features/programs/screens/program_builder_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
@@ -20,6 +22,8 @@ final appRouter = GoRouter(
     GoRoute(path: '/setup/region',   builder: (_, __) => const RegionScreen()),
     GoRoute(path: '/session',        builder: (_, __) => const ExerciseScreen()),
     GoRoute(path: '/summary',        builder: (_, __) => const SummaryScreen()),
+    GoRoute(path: '/programs',     builder: (_, __) => const ProgramListScreen()),
+    GoRoute(path: '/programs/new', builder: (_, __) => const ProgramBuilderScreen()),
     StatefulShellRoute.indexedStack(
       builder: (_, __, shell) => _MainScaffold(shell: shell),
       branches: [
