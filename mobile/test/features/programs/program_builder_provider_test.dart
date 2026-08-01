@@ -58,7 +58,9 @@ void main() {
     notifier.updateSets(1, 5);
     notifier.updateReps(2, 20);
     expect(notifier.state.items[0].sets, 5);
+    expect(notifier.state.items[0].reps, 12); // untouched
     expect(notifier.state.items[1].reps, 20);
+    expect(notifier.state.items[1].sets, 3); // untouched
   });
 
   test('filteredExercises filters by location, including BOTH', () {
@@ -85,12 +87,32 @@ void main() {
     expect(filtered.map((e) => e.id), [2]);
   });
 
+  test('setLocationFilter can clear filter by passing null', () {
+    final notifier = ProgramBuilderNotifier(null);
+    notifier.setLocationFilter('HOME');
+    expect(notifier.state.locationFilter, 'HOME');
+    notifier.setLocationFilter(null);
+    expect(notifier.state.locationFilter, null);
+  });
+
+  test('setMuscleGroupFilter can clear filter by passing null', () {
+    final notifier = ProgramBuilderNotifier(null);
+    notifier.setMuscleGroupFilter('CORE');
+    expect(notifier.state.muscleGroupFilter, 'CORE');
+    notifier.setMuscleGroupFilter(null);
+    expect(notifier.state.muscleGroupFilter, null);
+  });
+
   test('reset clears name and items', () {
     final notifier = ProgramBuilderNotifier(null);
     notifier.setName('Sabah Rutini');
     notifier.addExercise(_ex(1, 'Squat'));
+    notifier.setLocationFilter('HOME');
+    notifier.setMuscleGroupFilter('CORE');
     notifier.reset();
     expect(notifier.state.name, '');
     expect(notifier.state.items, isEmpty);
+    expect(notifier.state.locationFilter, null);
+    expect(notifier.state.muscleGroupFilter, null);
   });
 }

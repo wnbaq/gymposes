@@ -58,9 +58,23 @@ class ProgramBuilderNotifier extends StateNotifier<ProgramBuilderState> {
 
   void setName(String name) => state = state.copyWith(name: name);
 
-  void setLocationFilter(String? location) => state = state.copyWith(locationFilter: location);
+  void setLocationFilter(String? location) {
+    state = ProgramBuilderState(
+      name: state.name,
+      locationFilter: location,
+      muscleGroupFilter: state.muscleGroupFilter,
+      items: state.items,
+    );
+  }
 
-  void setMuscleGroupFilter(String? muscleGroup) => state = state.copyWith(muscleGroupFilter: muscleGroup);
+  void setMuscleGroupFilter(String? muscleGroup) {
+    state = ProgramBuilderState(
+      name: state.name,
+      locationFilter: state.locationFilter,
+      muscleGroupFilter: muscleGroup,
+      items: state.items,
+    );
+  }
 
   void addExercise(Exercise exercise) {
     if (state.items.any((i) => i.exercise.id == exercise.id)) return;
