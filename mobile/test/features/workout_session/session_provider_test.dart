@@ -23,4 +23,19 @@ void main() {
     final copy = state.copyWith(remainingSeconds: 10);
     expect(copy.isCountingDown, true);
   });
+
+  test('SessionState default sets, reps, and countUp', () {
+    const state = SessionState();
+    expect(state.sets, null);
+    expect(state.reps, null);
+    expect(state.countUp, false);
+  });
+
+  test('SessionState copyWith sets sets/reps/countUp', () {
+    const state = SessionState();
+    final copy = state.copyWith(sets: 3, reps: 12, countUp: true);
+    expect(copy.sets, 3);
+    expect(copy.reps, 12);
+    expect(copy.countUp, true);
+  });
 }

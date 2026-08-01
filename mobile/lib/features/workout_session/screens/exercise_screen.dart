@@ -96,7 +96,9 @@ class ExerciseScreen extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              '${exercise.defaultReps} tekrar',
+                              session.sets != null && session.reps != null
+                                  ? '${session.sets} set x ${session.reps} tekrar'
+                                  : '${exercise.defaultReps} tekrar',
                               style: const TextStyle(
                                   color: AppTheme.secondary,
                                   fontWeight: FontWeight.bold,

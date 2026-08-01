@@ -11,6 +11,9 @@ class SessionState {
   final bool completed;
   final WorkoutSummary? summary;
   final bool isCountingDown;
+  final int? sets;
+  final int? reps;
+  final bool countUp;
 
   const SessionState({
     this.sessionId,
@@ -19,6 +22,9 @@ class SessionState {
     this.completed = false,
     this.summary,
     this.isCountingDown = false,
+    this.sets,
+    this.reps,
+    this.countUp = false,
   });
 
   SessionState copyWith({
@@ -28,6 +34,9 @@ class SessionState {
     bool? completed,
     WorkoutSummary? summary,
     bool? isCountingDown,
+    int? sets,
+    int? reps,
+    bool? countUp,
   }) =>
       SessionState(
         sessionId: sessionId ?? this.sessionId,
@@ -36,6 +45,9 @@ class SessionState {
         completed: completed ?? this.completed,
         summary: summary ?? this.summary,
         isCountingDown: isCountingDown ?? this.isCountingDown,
+        sets: sets ?? this.sets,
+        reps: reps ?? this.reps,
+        countUp: countUp ?? this.countUp,
       );
 }
 
@@ -74,6 +86,28 @@ class SessionNotifier extends StateNotifier<AsyncValue<SessionState>> {
     }
   }
 
+  Future<void> startSessionFromProgram(int programId) async {
+    state = const AsyncValue.loading();
+    try {
+      final res = await _api.post('/workout/start-from-program', data: {
+        'programId': programId,
+      });
+      final response = WorkoutStartResponse.fromJson(
+          res.data as Map<String, dynamic>);
+      state = AsyncValue.data(SessionState(
+        sessionId: response.sessionId,
+        currentExercise: response.exercise,
+        remainingSeconds: 0,
+        isCountingDown: true,
+        countUp: true,
+        sets: response.sets,
+        reps: response.reps,
+      ));
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   void finishCountdown() {
     state.whenData((s) {
       state = AsyncValue.data(s.copyWith(isCountingDown: false));
@@ -101,6 +135,8 @@ class SessionNotifier extends StateNotifier<AsyncValue<SessionState>> {
         state = AsyncValue.data(current.copyWith(
           currentExercise: response.exercise,
           completed: false,
+          sets: response.sets,
+          reps: response.reps,
         ));
       }
     } catch (e, st) {
@@ -126,7 +162,10 @@ class SessionNotifier extends StateNotifier<AsyncValue<SessionState>> {
 
   void tick() {
     state.whenData((s) {
-      if (s.remainingSeconds > 0 && !s.completed) {
+      if (s.completed) return;
+      if (s.countUp) {
+        state = AsyncValue.data(s.copyWith(remainingSeconds: s.remainingSeconds + 1));
+      } else if (s.remainingSeconds > 0) {
         state = AsyncValue.data(s.copyWith(remainingSeconds: s.remainingSeconds - 1));
       }
     });
