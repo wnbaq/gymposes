@@ -7,4 +7,6 @@ public class WorkoutStartResponse {
     private Long sessionId;
     private ExerciseResponse exercise;
     private Integer remainingSeconds;
+    private Integer sets;
+    private Integer reps;
 }

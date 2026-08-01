@@ -21,6 +21,8 @@ public class WorkoutService {
     private final ExerciseRepository exerciseRepository;
     private final UserRepository userRepository;
     private final AdaptiveService adaptiveService;
+    private final WorkoutProgramRepository programRepository;
+    private final WorkoutProgramItemRepository programItemRepository;
 
     public WorkoutStartResponse startSession(String userEmail, WorkoutStartRequest request) {
         User user = userRepository.findByEmail(userEmail).orElseThrow();
@@ -38,6 +40,30 @@ public class WorkoutService {
             .sessionId(session.getId())
             .exercise(toResponse(first))
             .remainingSeconds(request.getDurationMinutes() * 60)
+            .build();
+    }
+
+    public WorkoutStartResponse startSessionFromProgram(String userEmail, StartFromProgramRequest request) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+        WorkoutProgram program = programRepository.findById(request.getProgramId())
+            .orElseThrow(() -> new IllegalArgumentException("Program not found"));
+        List<WorkoutProgramItem> items = programItemRepository.findByProgramOrderByOrderIndex(program);
+        if (items.isEmpty()) {
+            throw new IllegalStateException("Program has no exercises");
+        }
+
+        WorkoutSession session = WorkoutSession.builder()
+            .user(user).program(program).currentItemIndex(0)
+            .targetScore(5.0).startedAt(LocalDateTime.now()).build();
+        session = sessionRepository.save(session);
+
+        WorkoutProgramItem first = items.get(0);
+        return WorkoutStartResponse.builder()
+            .sessionId(session.getId())
+            .exercise(toResponse(first.getExercise()))
+            .remainingSeconds(0)
+            .sets(first.getSets())
+            .reps(first.getReps())
             .build();
     }
 

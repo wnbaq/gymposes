@@ -6,4 +6,6 @@ import lombok.Data;
 public class WorkoutNextResponse {
     private ExerciseResponse exercise;
     private boolean completed;
+    private Integer sets;
+    private Integer reps;
 }

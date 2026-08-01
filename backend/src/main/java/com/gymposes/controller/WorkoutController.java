@@ -22,6 +22,13 @@ public class WorkoutController {
         return ResponseEntity.ok(workoutService.startSession(user.getUsername(), request));
     }
 
+    @PostMapping("/start-from-program")
+    public ResponseEntity<WorkoutStartResponse> startFromProgram(
+            @RequestBody StartFromProgramRequest request,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(workoutService.startSessionFromProgram(user.getUsername(), request));
+    }
+
     @PostMapping("/{sessionId}/next")
     public ResponseEntity<WorkoutNextResponse> next(
             @PathVariable Long sessionId,
