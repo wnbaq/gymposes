@@ -5,6 +5,8 @@ class Exercise {
   final int defaultReps;
   final String lottieAssetPath;
   final double difficultyScore;
+  final String? muscleGroup;
+  final String? location;
 
   const Exercise({
     required this.id,
@@ -13,6 +15,8 @@ class Exercise {
     required this.defaultReps,
     required this.lottieAssetPath,
     required this.difficultyScore,
+    this.muscleGroup,
+    this.location,
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) => Exercise(
@@ -22,5 +26,7 @@ class Exercise {
     defaultReps: (json['defaultReps'] as int?) ?? 12,
     lottieAssetPath: (json['lottieAssetPath'] as String?) ?? 'placeholder.json',
     difficultyScore: (json['difficultyScore'] as num?)?.toDouble() ?? 5.0,
+    muscleGroup: json['muscleGroup'] as String?,
+    location: json['location'] as String?,
   );
 }

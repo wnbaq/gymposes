@@ -4,11 +4,15 @@ class WorkoutStartResponse {
   final int sessionId;
   final Exercise exercise;
   final int remainingSeconds;
+  final int? sets;
+  final int? reps;
 
   const WorkoutStartResponse({
     required this.sessionId,
     required this.exercise,
     required this.remainingSeconds,
+    this.sets,
+    this.reps,
   });
 
   factory WorkoutStartResponse.fromJson(Map<String, dynamic> json) =>
@@ -16,14 +20,18 @@ class WorkoutStartResponse {
         sessionId: json['sessionId'] as int,
         exercise: Exercise.fromJson(json['exercise'] as Map<String, dynamic>),
         remainingSeconds: json['remainingSeconds'] as int,
+        sets: json['sets'] as int?,
+        reps: json['reps'] as int?,
       );
 }
 
 class WorkoutNextResponse {
   final Exercise? exercise;
   final bool completed;
+  final int? sets;
+  final int? reps;
 
-  const WorkoutNextResponse({this.exercise, required this.completed});
+  const WorkoutNextResponse({this.exercise, required this.completed, this.sets, this.reps});
 
   factory WorkoutNextResponse.fromJson(Map<String, dynamic> json) =>
       WorkoutNextResponse(
@@ -31,6 +39,8 @@ class WorkoutNextResponse {
             ? Exercise.fromJson(json['exercise'] as Map<String, dynamic>)
             : null,
         completed: (json['completed'] as bool?) ?? false,
+        sets: json['sets'] as int?,
+        reps: json['reps'] as int?,
       );
 }
 
