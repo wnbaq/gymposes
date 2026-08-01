@@ -163,4 +163,21 @@ class WorkoutServiceTest {
         assertThat(response.getSets()).isEqualTo(3);
         assertThat(response.getReps()).isEqualTo(12);
     }
+
+    @Test
+    void startSessionFromProgram_rejectsAccessToOtherUsersProgram() {
+        User callingUser = User.builder().id(1L).email("test@test.com").build();
+        User programOwner = User.builder().id(2L).email("other@test.com").build();
+        WorkoutProgram program = WorkoutProgram.builder().id(5L).user(programOwner).name("Other User's Program").build();
+
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(callingUser));
+        when(programRepository.findById(5L)).thenReturn(Optional.of(program));
+
+        var request = new StartFromProgramRequest();
+        request.setProgramId(5L);
+
+        assertThatThrownBy(() -> workoutService.startSessionFromProgram("test@test.com", request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Program not found");
+    }
 }

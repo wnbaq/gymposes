@@ -47,6 +47,9 @@ public class WorkoutService {
         User user = userRepository.findByEmail(userEmail).orElseThrow();
         WorkoutProgram program = programRepository.findById(request.getProgramId())
             .orElseThrow(() -> new IllegalArgumentException("Program not found"));
+        if (!program.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Program not found");
+        }
         List<WorkoutProgramItem> items = programItemRepository.findByProgramOrderByOrderIndex(program);
         if (items.isEmpty()) {
             throw new IllegalStateException("Program has no exercises");
