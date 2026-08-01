@@ -79,6 +79,10 @@ public class WorkoutService {
             .session(session).exercise(current)
             .result(request.getResult()).timestamp(LocalDateTime.now()).build());
 
+        if (session.getProgram() != null) {
+            return nextProgramExercise(session);
+        }
+
         adaptiveService.updateUserScore(user, current, request.getResult());
         double newTarget = adaptiveService.updateTargetScore(session.getTargetScore(), request.getResult());
         session.setTargetScore(newTarget);
@@ -91,6 +95,25 @@ public class WorkoutService {
 
         Exercise next = adaptiveService.selectNextExercise(session, current.getId());
         return WorkoutNextResponse.builder().exercise(toResponse(next)).completed(false).build();
+    }
+
+    private WorkoutNextResponse nextProgramExercise(WorkoutSession session) {
+        List<WorkoutProgramItem> items = programItemRepository.findByProgramOrderByOrderIndex(session.getProgram());
+        int nextIndex = session.getCurrentItemIndex() + 1;
+        session.setCurrentItemIndex(nextIndex);
+        sessionRepository.save(session);
+
+        if (nextIndex >= items.size()) {
+            return WorkoutNextResponse.builder().completed(true).build();
+        }
+
+        WorkoutProgramItem next = items.get(nextIndex);
+        return WorkoutNextResponse.builder()
+            .exercise(toResponse(next.getExercise()))
+            .completed(false)
+            .sets(next.getSets())
+            .reps(next.getReps())
+            .build();
     }
 
     public WorkoutSummaryResponse completeSession(Long sessionId) {

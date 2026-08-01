@@ -180,4 +180,62 @@ class WorkoutServiceTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Program not found");
     }
+
+    @Test
+    void nextExercise_programMode_returnsNextItemInOrder() {
+        User user = User.builder().id(1L).email("test@test.com").build();
+        WorkoutProgram program = WorkoutProgram.builder().id(5L).build();
+        Exercise squat = Exercise.builder().id(10L).build();
+        Exercise lunge = Exercise.builder().id(11L).name("Lunge").build();
+        WorkoutProgramItem first = WorkoutProgramItem.builder()
+            .id(1L).program(program).exercise(squat).sets(3).reps(12).orderIndex(0).build();
+        WorkoutProgramItem second = WorkoutProgramItem.builder()
+            .id(2L).program(program).exercise(lunge).sets(3).reps(10).orderIndex(1).build();
+        WorkoutSession session = WorkoutSession.builder()
+            .id(1L).user(user).program(program).currentItemIndex(0).targetScore(5.0).build();
+
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(exerciseRepository.findById(10L)).thenReturn(Optional.of(squat));
+        when(programItemRepository.findByProgramOrderByOrderIndex(program)).thenReturn(List.of(first, second));
+        when(sessionRepository.save(any())).thenReturn(session);
+
+        var request = new WorkoutNextRequest();
+        request.setExerciseId(10L);
+        request.setResult(WorkoutResult.GOOD);
+
+        var response = workoutService.nextExercise("test@test.com", 1L, request);
+
+        assertThat(response.isCompleted()).isFalse();
+        assertThat(response.getExercise().getName()).isEqualTo("Lunge");
+        assertThat(response.getSets()).isEqualTo(3);
+        assertThat(response.getReps()).isEqualTo(10);
+        verify(adaptiveService, never()).selectNextExercise(any(), any());
+    }
+
+    @Test
+    void nextExercise_programMode_completesAfterLastItem() {
+        User user = User.builder().id(1L).email("test@test.com").build();
+        WorkoutProgram program = WorkoutProgram.builder().id(5L).build();
+        Exercise squat = Exercise.builder().id(10L).build();
+        WorkoutProgramItem only = WorkoutProgramItem.builder()
+            .id(1L).program(program).exercise(squat).sets(3).reps(12).orderIndex(0).build();
+        WorkoutSession session = WorkoutSession.builder()
+            .id(1L).user(user).program(program).currentItemIndex(0).targetScore(5.0).build();
+
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(exerciseRepository.findById(10L)).thenReturn(Optional.of(squat));
+        when(programItemRepository.findByProgramOrderByOrderIndex(program)).thenReturn(List.of(only));
+        when(sessionRepository.save(any())).thenReturn(session);
+
+        var request = new WorkoutNextRequest();
+        request.setExerciseId(10L);
+        request.setResult(WorkoutResult.GOOD);
+
+        var response = workoutService.nextExercise("test@test.com", 1L, request);
+
+        assertThat(response.isCompleted()).isTrue();
+        assertThat(response.getExercise()).isNull();
+    }
 }
