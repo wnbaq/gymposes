@@ -81,9 +81,6 @@ public class WorkoutService {
     }
 
     private ExerciseResponse toResponse(Exercise e) {
-        return ExerciseResponse.builder()
-            .id(e.getId()).name(e.getName()).description(e.getDescription())
-            .defaultReps(e.getDefaultReps()).lottieAssetPath(e.getLottieAssetPath())
-            .difficultyScore(e.getDifficultyScore()).build();
+        return ExerciseResponse.from(e);
     }
 }
