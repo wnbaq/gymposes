@@ -28,6 +28,11 @@ public class WorkoutSession {
     @Builder.Default
     private Double targetScore = 5.0;
 
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "program_id")
+    private WorkoutProgram program;
+
+    private Integer currentItemIndex;
+
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
 }
