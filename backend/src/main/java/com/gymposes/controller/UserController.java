@@ -35,7 +35,9 @@ public class UserController {
         List<WorkoutSession> sessions = sessionRepository.findByUser(user);
 
         Map<String, Long> regionBreakdown = sessions.stream()
-            .collect(Collectors.groupingBy(s -> s.getRegion().name(), Collectors.counting()));
+            .collect(Collectors.groupingBy(
+                s -> s.getRegion() == null ? "PROGRAM" : s.getRegion().name(),
+                Collectors.counting()));
 
         return ResponseEntity.ok(Map.of(
             "totalSessions", sessions.size(),
