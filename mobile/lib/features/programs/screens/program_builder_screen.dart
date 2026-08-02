@@ -5,6 +5,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../workout_session/providers/session_provider.dart';
 import '../providers/exercise_catalog_provider.dart';
 import '../providers/program_builder_provider.dart';
+import '../providers/programs_provider.dart';
 
 class ProgramBuilderScreen extends ConsumerWidget {
   const ProgramBuilderScreen({super.key});
@@ -116,6 +117,7 @@ class ProgramBuilderScreen extends ConsumerWidget {
               onPressed: builderState.canSave
                   ? () async {
                       final programId = await builderNotifier.save();
+                      ref.invalidate(programsProvider);
                       builderNotifier.reset();
                       await ref.read(sessionProvider.notifier).startSessionFromProgram(programId);
                       if (!context.mounted) return;

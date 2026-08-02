@@ -46,8 +46,8 @@ class ProgramBuilderState {
       );
 }
 
-final programBuilderProvider =
-    StateNotifierProvider<ProgramBuilderNotifier, ProgramBuilderState>((ref) {
+final programBuilderProvider = StateNotifierProvider.autoDispose<
+    ProgramBuilderNotifier, ProgramBuilderState>((ref) {
   return ProgramBuilderNotifier(ref.read(apiClientProvider));
 });
 
