@@ -1,4 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gymposesapp/core/api/api_client.dart';
 import 'package:gymposesapp/features/workout_session/providers/session_provider.dart';
 
 void main() {
@@ -37,5 +39,51 @@ void main() {
     expect(copy.sets, 3);
     expect(copy.reps, 12);
     expect(copy.countUp, true);
+  });
+
+  group('SessionNotifier.tick', () {
+    test('increments remainingSeconds when countUp is true', () {
+      final notifier = SessionNotifier(ApiClient());
+      notifier.state = const AsyncValue.data(
+        SessionState(countUp: true, remainingSeconds: 5),
+      );
+
+      notifier.tick();
+
+      expect(notifier.state.value!.remainingSeconds, 6);
+    });
+
+    test('decrements remainingSeconds when countUp is false and time remains', () {
+      final notifier = SessionNotifier(ApiClient());
+      notifier.state = const AsyncValue.data(
+        SessionState(countUp: false, remainingSeconds: 5),
+      );
+
+      notifier.tick();
+
+      expect(notifier.state.value!.remainingSeconds, 4);
+    });
+
+    test('does not decrement below zero when countUp is false', () {
+      final notifier = SessionNotifier(ApiClient());
+      notifier.state = const AsyncValue.data(
+        SessionState(countUp: false, remainingSeconds: 0),
+      );
+
+      notifier.tick();
+
+      expect(notifier.state.value!.remainingSeconds, 0);
+    });
+
+    test('does not change remainingSeconds once completed', () {
+      final notifier = SessionNotifier(ApiClient());
+      notifier.state = const AsyncValue.data(
+        SessionState(countUp: true, remainingSeconds: 5, completed: true),
+      );
+
+      notifier.tick();
+
+      expect(notifier.state.value!.remainingSeconds, 5);
+    });
   });
 }
