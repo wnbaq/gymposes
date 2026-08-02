@@ -25,6 +25,20 @@ public class ProgramService {
         if (request.getItems() == null || request.getItems().isEmpty()) {
             throw new IllegalArgumentException("Program must have at least one exercise");
         }
+        for (ProgramItemRequest item : request.getItems()) {
+            if (item.getExerciseId() == null) {
+                throw new IllegalArgumentException("Each program item requires an exerciseId");
+            }
+            if (item.getSets() == null || item.getSets() < 1) {
+                throw new IllegalArgumentException("Each program item requires sets >= 1");
+            }
+            if (item.getReps() == null || item.getReps() < 1) {
+                throw new IllegalArgumentException("Each program item requires reps >= 1");
+            }
+            if (item.getOrderIndex() == null) {
+                throw new IllegalArgumentException("Each program item requires an orderIndex");
+            }
+        }
 
         User user = userRepository.findByEmail(userEmail).orElseThrow();
         WorkoutProgram program = programRepository.save(

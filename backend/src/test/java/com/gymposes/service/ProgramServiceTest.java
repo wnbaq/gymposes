@@ -78,6 +78,86 @@ class ProgramServiceTest {
     }
 
     @Test
+    void createProgram_throwsWhenSetsIsNull() {
+        var itemRequest = new ProgramItemRequest();
+        itemRequest.setExerciseId(10L);
+        itemRequest.setSets(null);
+        itemRequest.setReps(12);
+        itemRequest.setOrderIndex(0);
+
+        var request = new CreateProgramRequest();
+        request.setName("Sabah Rutini");
+        request.setItems(List.of(itemRequest));
+
+        assertThatThrownBy(() -> programService.createProgram("test@test.com", request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createProgram_throwsWhenSetsIsZeroOrNegative() {
+        var itemRequest = new ProgramItemRequest();
+        itemRequest.setExerciseId(10L);
+        itemRequest.setSets(0);
+        itemRequest.setReps(12);
+        itemRequest.setOrderIndex(0);
+
+        var request = new CreateProgramRequest();
+        request.setName("Sabah Rutini");
+        request.setItems(List.of(itemRequest));
+
+        assertThatThrownBy(() -> programService.createProgram("test@test.com", request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createProgram_throwsWhenRepsIsNull() {
+        var itemRequest = new ProgramItemRequest();
+        itemRequest.setExerciseId(10L);
+        itemRequest.setSets(3);
+        itemRequest.setReps(null);
+        itemRequest.setOrderIndex(0);
+
+        var request = new CreateProgramRequest();
+        request.setName("Sabah Rutini");
+        request.setItems(List.of(itemRequest));
+
+        assertThatThrownBy(() -> programService.createProgram("test@test.com", request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createProgram_throwsWhenOrderIndexIsNull() {
+        var itemRequest = new ProgramItemRequest();
+        itemRequest.setExerciseId(10L);
+        itemRequest.setSets(3);
+        itemRequest.setReps(12);
+        itemRequest.setOrderIndex(null);
+
+        var request = new CreateProgramRequest();
+        request.setName("Sabah Rutini");
+        request.setItems(List.of(itemRequest));
+
+        assertThatThrownBy(() -> programService.createProgram("test@test.com", request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createProgram_throwsWhenExerciseIdIsNull() {
+        var itemRequest = new ProgramItemRequest();
+        itemRequest.setExerciseId(null);
+        itemRequest.setSets(3);
+        itemRequest.setReps(12);
+        itemRequest.setOrderIndex(0);
+
+        var request = new CreateProgramRequest();
+        request.setName("Sabah Rutini");
+        request.setItems(List.of(itemRequest));
+
+        assertThatThrownBy(() -> programService.createProgram("test@test.com", request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void listPrograms_returnsUsersProgramsWithItems() {
         User user = User.builder().id(1L).email("test@test.com").build();
         WorkoutProgram program = WorkoutProgram.builder().id(1L).user(user).name("Sabah Rutini").build();
