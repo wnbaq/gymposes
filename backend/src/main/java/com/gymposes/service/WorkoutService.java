@@ -73,6 +73,9 @@ public class WorkoutService {
     public WorkoutNextResponse nextExercise(String userEmail, Long sessionId, WorkoutNextRequest request) {
         WorkoutSession session = sessionRepository.findById(sessionId).orElseThrow();
         User user = userRepository.findByEmail(userEmail).orElseThrow();
+        if (!session.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Session not found");
+        }
         Exercise current = exerciseRepository.findById(request.getExerciseId()).orElseThrow();
 
         sessionLogRepository.save(SessionLog.builder()
@@ -116,8 +119,12 @@ public class WorkoutService {
             .build();
     }
 
-    public WorkoutSummaryResponse completeSession(Long sessionId) {
+    public WorkoutSummaryResponse completeSession(String userEmail, Long sessionId) {
         WorkoutSession session = sessionRepository.findById(sessionId).orElseThrow();
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+        if (!session.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Session not found");
+        }
         session.setCompletedAt(LocalDateTime.now());
         sessionRepository.save(session);
 
@@ -126,10 +133,14 @@ public class WorkoutService {
         long bad  = logs.stream().filter(l -> l.getResult() == WorkoutResult.BAD).count();
         long skip = logs.stream().filter(l -> l.getResult() == WorkoutResult.SKIP).count();
 
+        Integer durationMinutes = session.getDurationMinutes() != null
+            ? session.getDurationMinutes()
+            : (int) ChronoUnit.MINUTES.between(session.getStartedAt(), session.getCompletedAt());
+
         return WorkoutSummaryResponse.builder()
             .sessionId(sessionId).totalExercises(logs.size())
             .goodCount((int) good).badCount((int) bad).skipCount((int) skip)
-            .durationMinutes(session.getDurationMinutes()).build();
+            .durationMinutes(durationMinutes).build();
     }
 
     private ExerciseResponse toResponse(Exercise e) {

@@ -38,7 +38,9 @@ public class WorkoutController {
     }
 
     @PostMapping("/{sessionId}/complete")
-    public ResponseEntity<WorkoutSummaryResponse> complete(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(workoutService.completeSession(sessionId));
+    public ResponseEntity<WorkoutSummaryResponse> complete(
+            @PathVariable Long sessionId,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(workoutService.completeSession(user.getUsername(), sessionId));
     }
 }

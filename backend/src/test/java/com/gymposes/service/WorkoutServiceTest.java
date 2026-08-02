@@ -109,9 +109,31 @@ class WorkoutServiceTest {
     }
 
     @Test
-    void completeSession_setsCompletedAtAndReturnsSummary() {
+    void nextExercise_rejectsAccessToOtherUsersSession() {
+        User owner = User.builder().id(1L).email("owner@test.com").build();
+        User caller = User.builder().id(2L).email("caller@test.com").build();
         WorkoutSession session = WorkoutSession.builder()
-            .id(1L).durationMinutes(30).build();
+            .id(1L).user(owner).targetScore(5.0).durationMinutes(30)
+            .startedAt(LocalDateTime.now().minusMinutes(5))
+            .build();
+
+        when(userRepository.findByEmail("caller@test.com")).thenReturn(Optional.of(caller));
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+
+        var request = new WorkoutNextRequest();
+        request.setExerciseId(5L);
+        request.setResult(WorkoutResult.GOOD);
+
+        assertThatThrownBy(() -> workoutService.nextExercise("caller@test.com", 1L, request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Session not found");
+    }
+
+    @Test
+    void completeSession_setsCompletedAtAndReturnsSummary() {
+        User user = User.builder().id(1L).email("test@test.com").build();
+        WorkoutSession session = WorkoutSession.builder()
+            .id(1L).user(user).durationMinutes(30).build();
         List<SessionLog> logs = List.of(
             SessionLog.builder().result(WorkoutResult.GOOD).build(),
             SessionLog.builder().result(WorkoutResult.GOOD).build(),
@@ -119,17 +141,54 @@ class WorkoutServiceTest {
             SessionLog.builder().result(WorkoutResult.SKIP).build()
         );
 
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
         when(sessionRepository.save(any())).thenReturn(session);
         when(sessionLogRepository.findBySession(session)).thenReturn(logs);
 
-        var summary = workoutService.completeSession(1L);
+        var summary = workoutService.completeSession("test@test.com", 1L);
 
         assertThat(summary.getTotalExercises()).isEqualTo(4);
         assertThat(summary.getGoodCount()).isEqualTo(2);
         assertThat(summary.getBadCount()).isEqualTo(1);
         assertThat(summary.getSkipCount()).isEqualTo(1);
         assertThat(summary.getDurationMinutes()).isEqualTo(30);
+    }
+
+    @Test
+    void completeSession_computesDurationFromTimestampsWhenDurationMinutesNull() {
+        User user = User.builder().id(1L).email("test@test.com").build();
+        WorkoutProgram program = WorkoutProgram.builder().id(5L).user(user).build();
+        WorkoutSession session = WorkoutSession.builder()
+            .id(1L).user(user).program(program).currentItemIndex(1)
+            .durationMinutes(null)
+            .startedAt(LocalDateTime.now().minusMinutes(7))
+            .build();
+
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(sessionRepository.save(any())).thenReturn(session);
+        when(sessionLogRepository.findBySession(session)).thenReturn(List.of());
+
+        var summary = workoutService.completeSession("test@test.com", 1L);
+
+        assertThat(summary.getDurationMinutes()).isNotNull();
+        assertThat(summary.getDurationMinutes()).isEqualTo(7);
+    }
+
+    @Test
+    void completeSession_rejectsAccessToOtherUsersSession() {
+        User owner = User.builder().id(1L).email("owner@test.com").build();
+        User caller = User.builder().id(2L).email("caller@test.com").build();
+        WorkoutSession session = WorkoutSession.builder()
+            .id(1L).user(owner).durationMinutes(30).build();
+
+        when(userRepository.findByEmail("caller@test.com")).thenReturn(Optional.of(caller));
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+
+        assertThatThrownBy(() -> workoutService.completeSession("caller@test.com", 1L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Session not found");
     }
 
     @Test
