@@ -67,6 +67,6 @@ class WorkoutSummary {
     goodCount: json['goodCount'] as int,
     badCount: json['badCount'] as int,
     skipCount: json['skipCount'] as int,
-    durationMinutes: json['durationMinutes'] as int,
+    durationMinutes: (json['durationMinutes'] as int?) ?? 0,
   );
 }
