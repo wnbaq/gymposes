@@ -12,6 +12,7 @@ class RegionScreen extends ConsumerWidget {
     ('UPPER', '💪', 'Üst Vücut', 'Göğüs, sırt, omuz, kol'),
     ('LOWER', '🦵', 'Alt Vücut', 'Bacak, kalça, quadriceps'),
     ('CORE', '🔥', 'Core', 'Karın, bel, denge kasları'),
+    ('FULL_BODY', '🏃', 'Tüm Vücut', 'Tüm kas gruplarından karışık egzersizler'),
   ];
 
   @override

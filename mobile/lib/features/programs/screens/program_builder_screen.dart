@@ -69,16 +69,7 @@ class ProgramBuilderScreen extends ConsumerWidget {
                 return ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    ...filtered.map((exercise) => ListTile(
-                          title: Text(exercise.name),
-                          subtitle: Text('${exercise.defaultReps} tekrar (varsayılan)'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.add_circle_outline, color: AppTheme.primary),
-                            onPressed: () => builderNotifier.addExercise(exercise),
-                          ),
-                        )),
                     if (builderState.items.isNotEmpty) ...[
-                      const Divider(height: 24),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 4),
                         child: Text('Seçilenler', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -105,7 +96,16 @@ class ProgramBuilderScreen extends ConsumerWidget {
                               ],
                             ),
                           )),
+                      const Divider(height: 24),
                     ],
+                    ...filtered.map((exercise) => ListTile(
+                          title: Text(exercise.name),
+                          subtitle: Text('${exercise.defaultReps} tekrar (varsayılan)'),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.add_circle_outline, color: AppTheme.primary),
+                            onPressed: () => builderNotifier.addExercise(exercise),
+                          ),
+                        )),
                   ],
                 );
               },

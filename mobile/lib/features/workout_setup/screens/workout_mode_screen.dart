@@ -1,40 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
-import '../providers/workout_setup_provider.dart';
 
-class LocationScreen extends ConsumerWidget {
-  const LocationScreen({super.key});
+class WorkoutModeScreen extends StatelessWidget {
+  const WorkoutModeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Nerede antrenman yapacaksın?')),
+      appBar: AppBar(title: const Text('Nasıl antrenman yapmak istersin?')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _OptionCard(
-              icon: '🏠',
-              title: 'Evde',
-              subtitle: 'Ekipman gerektirmeyen egzersizler',
-              onTap: () {
-                ref.read(workoutSetupProvider.notifier).setLocation('HOME');
-                context.push('/setup/duration');
-              },
+              icon: '📝',
+              title: 'Kendi Antrenmanın',
+              subtitle: 'Egzersizlerini kendin seç, set ve tekrar belirle',
+              onTap: () => context.push('/programs'),
             ),
             const SizedBox(height: 16),
             _OptionCard(
-              icon: '🏋️',
-              title: 'Spor Salonu',
-              subtitle: 'Ekipman gerektiren egzersizler dahil',
-              onTap: () {
-                ref.read(workoutSetupProvider.notifier).setLocation('GYM');
-                context.push('/setup/duration');
-              },
+              icon: '✨',
+              title: 'Sen Öner',
+              subtitle: 'Performansına göre uyarlanan antrenman',
+              onTap: () => context.push('/setup/location'),
             ),
           ],
         ),

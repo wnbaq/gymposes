@@ -28,7 +28,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!mounted) return;
     final authState = ref.read(authProvider);
     authState.when(
-      data: (_) => context.go('/setup/location'),
+      data: (_) => context.go('/home'),
       error: (e, _) => ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Kayıt başarısız: $e'))),
       loading: () {},

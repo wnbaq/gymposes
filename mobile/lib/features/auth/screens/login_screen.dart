@@ -29,7 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
     final authState = ref.read(authProvider);
     authState.when(
-      data: (_) => context.go('/setup/location'),
+      data: (_) => context.go('/home'),
       error: (e, _) => ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Giriş başarısız: $e'))),
       loading: () {},

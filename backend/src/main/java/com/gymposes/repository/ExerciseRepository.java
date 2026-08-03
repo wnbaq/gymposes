@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     List<Exercise> findByMuscleGroupAndLocationIn(MuscleGroup muscleGroup, List<ExerciseLocation> locations);
+    List<Exercise> findByLocationIn(List<ExerciseLocation> locations);
 }

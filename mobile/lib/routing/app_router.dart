@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/register_screen.dart';
+import '../features/workout_setup/screens/workout_mode_screen.dart';
 import '../features/workout_setup/screens/location_screen.dart';
 import '../features/workout_setup/screens/duration_screen.dart';
 import '../features/workout_setup/screens/region_screen.dart';
@@ -28,7 +29,7 @@ final appRouter = GoRouter(
       builder: (_, __, shell) => _MainScaffold(shell: shell),
       branches: [
         StatefulShellBranch(routes: [
-          GoRoute(path: '/home', builder: (_, __) => const LocationScreen()),
+          GoRoute(path: '/home', builder: (_, __) => const WorkoutModeScreen()),
         ]),
         StatefulShellBranch(routes: [
           GoRoute(path: '/history', builder: (_, __) => const HistoryScreen()),

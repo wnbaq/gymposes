@@ -39,7 +39,7 @@ class SummaryScreen extends ConsumerWidget {
                 onPressed: () {
                   ref.read(sessionProvider.notifier).reset();
                   ref.read(workoutSetupProvider.notifier).reset();
-                  context.go('/setup/location');
+                  context.go('/home');
                 },
                 child: const Text('Yeni Antrenman'),
               ),

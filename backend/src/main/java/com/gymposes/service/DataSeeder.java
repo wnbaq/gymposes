@@ -43,7 +43,30 @@ public class DataSeeder implements CommandLineRunner {
             ex("Mekik", "Klasik mekik", MuscleGroup.CORE, ExerciseLocation.BOTH, 3.0, 15, "crunch.json"),
             ex("Bisiklet Mekik", "Çapraz mekik", MuscleGroup.CORE, ExerciseLocation.BOTH, 5.0, 15, "bicycle_crunch.json"),
             ex("Mountain Climber", "Koşar adım egzersizi", MuscleGroup.CORE, ExerciseLocation.BOTH, 6.0, 20, "mountain_climber.json"),
-            ex("Leg Raise", "Yatarak bacak kaldırma", MuscleGroup.CORE, ExerciseLocation.BOTH, 5.0, 12, "leg_raise.json")
+            ex("Leg Raise", "Yatarak bacak kaldırma", MuscleGroup.CORE, ExerciseLocation.BOTH, 5.0, 12, "leg_raise.json"),
+            // UPPER - GYM (macfit.com kaynaklı ek egzersizler)
+            ex("Bench Press", "Barbell ile göğüs presi", MuscleGroup.UPPER, ExerciseLocation.GYM, 6.0, 10, "placeholder.json"),
+            ex("Barbell Row", "Eğilerek barbell ile sırt çekme", MuscleGroup.UPPER, ExerciseLocation.GYM, 6.0, 10, "placeholder.json"),
+            ex("Lat Pulldown", "Kablo makinesinde sırt çekme", MuscleGroup.UPPER, ExerciseLocation.GYM, 4.0, 12, "placeholder.json"),
+            ex("Shoulder Press", "Dumbbell ile omuz presi", MuscleGroup.UPPER, ExerciseLocation.GYM, 5.0, 10, "placeholder.json"),
+            ex("Dumbbell Lateral Raise", "Yana kaldırma, omuz izolasyonu", MuscleGroup.UPPER, ExerciseLocation.GYM, 4.0, 12, "placeholder.json"),
+            ex("Biceps Curl", "Dumbbell ile biceps çalışması", MuscleGroup.UPPER, ExerciseLocation.GYM, 3.0, 12, "placeholder.json"),
+            ex("Triceps Pushdown", "Kablo makinesinde triceps çalışması", MuscleGroup.UPPER, ExerciseLocation.GYM, 3.0, 12, "placeholder.json"),
+            // LOWER - BOTH (macfit.com kaynaklı ek egzersizler)
+            ex("Bulgarian Split Squat", "Tek bacak squat, denge ve güç", MuscleGroup.LOWER, ExerciseLocation.BOTH, 6.0, 10, "placeholder.json"),
+            ex("Walking Lunge", "İlerleyerek lunge", MuscleGroup.LOWER, ExerciseLocation.BOTH, 5.0, 12, "placeholder.json"),
+            ex("Calf Raise", "Baldır kaldırma", MuscleGroup.LOWER, ExerciseLocation.BOTH, 2.0, 15, "placeholder.json"),
+            ex("Wall Sit", "Duvara yaslanıp squat pozisyonunda bekleme", MuscleGroup.LOWER, ExerciseLocation.BOTH, 4.0, 1, "placeholder.json"),
+            // CORE - BOTH (macfit.com kaynaklı ek egzersizler)
+            ex("Side Plank", "Yan plank, oblik kaslar", MuscleGroup.CORE, ExerciseLocation.BOTH, 4.0, 1, "placeholder.json"),
+            ex("Russian Twist", "Oturarak gövde çevirme", MuscleGroup.CORE, ExerciseLocation.BOTH, 4.0, 20, "placeholder.json"),
+            ex("Glute Bridge", "Kalça köprüsü", MuscleGroup.CORE, ExerciseLocation.BOTH, 3.0, 15, "placeholder.json"),
+            ex("Bird Dog", "Karşılıklı kol-bacak uzatma, denge", MuscleGroup.CORE, ExerciseLocation.BOTH, 3.0, 12, "placeholder.json"),
+            ex("Hip Thrust", "Bench destekli kalça itişi", MuscleGroup.CORE, ExerciseLocation.GYM, 5.0, 12, "placeholder.json"),
+            // FULL_BODY (macfit.com kaynaklı ek egzersizler)
+            ex("Kettlebell Swing", "Kettlebell ile kalça sallama, tüm vücut", MuscleGroup.FULL_BODY, ExerciseLocation.GYM, 6.0, 15, "placeholder.json"),
+            ex("Farmer's Walk", "Ağırlık taşıyarak yürüme", MuscleGroup.FULL_BODY, ExerciseLocation.GYM, 5.0, 1, "placeholder.json"),
+            ex("Deadlift", "Barbell ile zemin çekişi, tüm sırt zinciri", MuscleGroup.FULL_BODY, ExerciseLocation.GYM, 8.0, 6, "placeholder.json")
         ));
     }
 

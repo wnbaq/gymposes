@@ -2,6 +2,7 @@ package com.gymposes.service;
 
 import com.gymposes.entity.*;
 import com.gymposes.enums.ExerciseLocation;
+import com.gymposes.enums.MuscleGroup;
 import com.gymposes.enums.WorkoutResult;
 import com.gymposes.repository.ExerciseRepository;
 import com.gymposes.repository.UserScoreRepository;
@@ -21,10 +22,10 @@ public class AdaptiveService {
     private final UserScoreRepository userScoreRepository;
 
     public Exercise selectNextExercise(WorkoutSession session, Long excludeExerciseId) {
-        List<Exercise> candidates = exerciseRepository.findByMuscleGroupAndLocationIn(
-            session.getRegion(),
-            List.of(session.getLocation(), ExerciseLocation.BOTH)
-        );
+        List<ExerciseLocation> locations = List.of(session.getLocation(), ExerciseLocation.BOTH);
+        List<Exercise> candidates = session.getRegion() == MuscleGroup.FULL_BODY
+            ? exerciseRepository.findByLocationIn(locations)
+            : exerciseRepository.findByMuscleGroupAndLocationIn(session.getRegion(), locations);
 
         Map<Long, Double> userScores = userScoreRepository
             .findByUserAndExerciseIn(session.getUser(), candidates)

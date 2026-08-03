@@ -1,3 +1,3 @@
 package com.gymposes.enums;
 
-public enum MuscleGroup { UPPER, LOWER, CORE }
+public enum MuscleGroup { UPPER, LOWER, CORE, FULL_BODY }

@@ -59,6 +59,26 @@ class AdaptiveServiceTest {
     }
 
     @Test
+    void selectNextExercise_fullBodyIgnoresMuscleGroup() {
+        WorkoutSession fullBodySession = WorkoutSession.builder()
+            .user(user).region(MuscleGroup.FULL_BODY)
+            .location(ExerciseLocation.HOME).targetScore(5.0).build();
+
+        Exercise upperEx = Exercise.builder().id(4L).difficultyScore(5.0)
+            .muscleGroup(MuscleGroup.UPPER).location(ExerciseLocation.BOTH).build();
+        Exercise lowerEx = Exercise.builder().id(5L).difficultyScore(8.0)
+            .muscleGroup(MuscleGroup.LOWER).location(ExerciseLocation.BOTH).build();
+
+        when(exerciseRepository.findByLocationIn(anyList()))
+            .thenReturn(List.of(upperEx, lowerEx));
+
+        Exercise selected = adaptiveService.selectNextExercise(fullBodySession, null);
+
+        assertThat(selected.getId()).isEqualTo(4L); // upperEx (5.0) is closest to targetScore 5.0
+        verify(exerciseRepository, never()).findByMuscleGroupAndLocationIn(any(), anyList());
+    }
+
+    @Test
     void updateTargetScore_goodIncreasesTarget() {
         double result = adaptiveService.updateTargetScore(5.0, WorkoutResult.GOOD);
         assertThat(result).isEqualTo(5.5);
